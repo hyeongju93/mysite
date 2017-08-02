@@ -212,7 +212,7 @@ public class boardDao {
 						  "values(seq_board_no.nextval,?,?,0,sysdate,?)";					
 			pstmt = conn.prepareStatement(query);// 쿼리 담당
 			pstmt.setString(1,title);
-			pstmt.setString(2,content);
+			pstmt.setString(2,content.replace("\r\n", "<br>"));
 			pstmt.setInt(3,user_no);
 			
 			
@@ -284,7 +284,7 @@ public class boardDao {
 				System.out.println("쿼리 집어넣고");
 				pstmt.setString(1,title);
 				System.out.println("1번 title");
-				pstmt.setString(2, content);
+				pstmt.setString(2, content.replace("\r\n", "<br>"));
 				System.out.println("2번 content");
 				pstmt.setInt(3, num);
 				System.out.println("3번 번호");
@@ -414,13 +414,18 @@ public class boardDao {
 			
 			// 4.결과처리
 			while(rs.next()) {
-				boardVo vo=new boardVo(rs.getInt("num"),
-										rs.getString("title"),
-										rs.getString("content"),
-										rs.getInt("hit"),
-										rs.getString("reg_date"),
-										rs.getInt("user_no"),
-										rs.getString("names"));	
+				int num=rs.getInt("num");
+				String title=rs.getString("title");
+				String content=rs.getString("content");
+				int hit=rs.getInt("hit");
+				String reg_date=rs.getString("reg_date");
+				int user_no=rs.getInt("user_no");
+				String names=rs.getString("names");
+				
+				System.out.println(content);
+				
+				
+				boardVo vo=new boardVo(num,title,content,hit,reg_date,user_no,names);
 				list.add(vo);
 			}
 			

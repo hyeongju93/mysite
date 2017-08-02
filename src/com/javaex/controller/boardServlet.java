@@ -51,6 +51,7 @@ public class boardServlet extends HttpServlet {
 			String title=request.getParameter("title");
 			String content=request.getParameter("content");
 			
+			
 			HttpSession session=request.getSession();
 			UserVo authUser=(UserVo)session.getAttribute("authUser");
 			int user_no=authUser.getNo();
