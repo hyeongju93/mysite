@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.javaex.dao.UserDao;
+import com.javaex.utill.Webutill;
 import com.javaex.vo.UserVo;
 
 
@@ -22,11 +23,11 @@ public class UserServlet extends HttpServlet {
 		int count=0;
 		request.setCharacterEncoding("UTF-8");
 		String actionName=request.getParameter("a");
-		System.out.println("컨트롤러");
+
 		if("joinform".equals(actionName)) {
-			RequestDispatcher rd=request.getRequestDispatcher("/WEB-INF/views/user/joinform.jsp");
-			rd.forward(request, response);
-		} if("join".equals(actionName)) {
+			Webutill.forward(request, response, "/WEB-INF/views/user/joinform.jsp");
+			
+		} else if("join".equals(actionName)) {
 			String name= request.getParameter("name");
 			String email=request.getParameter("email");
 			String password=request.getParameter("password");
@@ -35,16 +36,11 @@ public class UserServlet extends HttpServlet {
 			
 			UserDao dao=new UserDao();
 			count=dao.insert(vo);
-			
-			RequestDispatcher rd=request.getRequestDispatcher("WEB-INF/views/user/joinsuccess.jsp");
-			rd.forward(request, response);
+			Webutill.forward(request, response, "WEB-INF/views/user/joinsuccess.jsp");
 			
 		} else if("loginform".equals(actionName)) {
 			
-			RequestDispatcher rd=request.getRequestDispatcher("/WEB-INF/views/user/loginform.jsp");
-			rd.forward(request, response);
-			
-	
+			Webutill.forward(request, response, "/WEB-INF/views/user/loginform.jsp");
 		} else if("login".equals(actionName)){
 			String email=request.getParameter("email");
 			String password=request.getParameter("password");
@@ -52,27 +48,20 @@ public class UserServlet extends HttpServlet {
 			UserVo vo=dao.getUser(email, password);
 		
 			if(vo==null) {
-				System.out.println("실패");
-				response.sendRedirect("/mysite/user?a=loginform&result=fail");
-				return;
+				Webutill.redirect(request, response, "/mysite/user?a=loginform&result=fail");
+				
 			} else {
-				System.out.println("성공");
 				HttpSession session=request.getSession(true);
 				session.setAttribute("authUser", vo);
-				
-				response.sendRedirect("/mysite/main");
-				return;
+				Webutill.redirect(request, response, "/mysite/main");
 			}
 			
 			
-			
-			
 		} else if("logout".equals(actionName)){
-			System.out.println("들어왔엉");
 			HttpSession session=request.getSession();
 			session.removeAttribute("authUser");
 			session.invalidate();
-			response.sendRedirect("/mysite/main");
+			Webutill.redirect(request, response, "/mysite/main");//사용자입장
 			
 		} else if("modifyform".equals(actionName)) {
 			HttpSession session=request.getSession();
@@ -84,11 +73,34 @@ public class UserServlet extends HttpServlet {
 			System.out.println(userVo.toString());
 			
 			request.setAttribute("userVo", userVo);
-			RequestDispatcher rd=request.getRequestDispatcher("/WEB-INF/views/user/modifyform.jsp");
-			rd.forward(request, response);
+			Webutill.forward(request, response, "/WEB-INF/views/user/modifyform.jsp");
 			
-		}else {
-			response.sendRedirect("/mysite/main");
+		}else if("modify".equals(actionName)){
+
+			String name=request.getParameter("name");
+			String pass=request.getParameter("password");
+			String gender=request.getParameter("gender");
+			
+			UserVo vo=new UserVo();
+			vo.setNames(name);
+			vo.setPasswords(pass);
+			vo.setGender(gender);
+			
+			HttpSession session=request.getSession();
+			UserVo authUser=(UserVo)session.getAttribute("authUser");
+			
+			int no=authUser.getNo();
+			vo.setNo(no);
+			
+			UserDao dao=new UserDao();
+			dao.update(vo);
+			
+			authUser.setNames(name);		
+			Webutill.forward(request, response, "/WEB-INF/views/main/index.jsp");			
+			
+		}else  {
+			Webutill.redirect(request, response, "/mysite/main");
+			
 		}
 			
 		
@@ -96,7 +108,7 @@ public class UserServlet extends HttpServlet {
 		
 	}
 
-	
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}

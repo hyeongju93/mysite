@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -11,15 +11,14 @@
 
 	<div id="container">
 		
-		<jsp:include page="/WEB-INF/views/includes/header.jsp"></jsp:include>
-		
-		<jsp:include page="/WEB-INF/views/includes/navigataion.jsp"></jsp:include>
+		<c:import url="/WEB-INF/views/includes/header.jsp"></c:import>
+		<c:import url="/WEB-INF/views/includes/navigataion.jsp"></c:import>
 		
 		<div id="wrapper">
 			<div id="content">
 				<div id="user">
 	
-					<form id="join-form" name="joinForm" method="" action="">
+					<form id="join-form" name="joinForm" method="get" action="">
 						<input type="text" name="a" value="join" >
 						
 						<label class="block-label" for="name">이름</label>
@@ -52,7 +51,7 @@
 			</div><!-- /content -->
 		</div><!-- /wrapper -->
 		
-		<jsp:include page="/WEB-INF/views/includes/footer.jsp"></jsp:include>
+		<c:import url="/WEB-INF/views/includes/footer.jsp"></c:import>
 		
 	</div> <!-- /container -->
 

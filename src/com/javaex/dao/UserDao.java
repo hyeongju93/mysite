@@ -11,6 +11,73 @@ import com.javaex.vo.UserVo;
 
 
 public class UserDao {
+	public int update(UserVo vo) {
+		System.out.println("update 진입");
+		int count=0;
+		Connection conn = null; // 연결
+		PreparedStatement pstmt = null; // query 전달팩
+		
+		
+		try {
+			// 1. JDBC 드라이버(Oracle) 로딩
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			// 2. Connection 얻어오기
+			String url = "jdbc:oracle:thin:@localhost:1521:xe";
+			conn = DriverManager.getConnection(url, "webdb", "webdb");
+			
+			if (vo.getPasswords().equals("")) {
+				System.out.println("null 진입");
+				String query = "update userr " + "set names=?, " + "gender=? " + "where no=?";
+				pstmt = conn.prepareStatement(query);// 쿼리 담당
+				pstmt.setString(1, vo.getNames());
+				pstmt.setString(2, vo.getGender());
+				pstmt.setInt(3, vo.getNo());
+
+				// 4.결과처리
+				count = pstmt.executeUpdate();
+			} else {
+
+				// 3. SQL문 준비/바인딩/실행
+				String query = "update userr " + "set names=?, " + "gender=?, " + "passwords=? " + "where no=?";
+				pstmt = conn.prepareStatement(query);// 쿼리 담당
+				pstmt.setString(1, vo.getNames());
+				pstmt.setString(2, vo.getGender());
+				pstmt.setString(3, vo.getPasswords());
+				pstmt.setInt(4, vo.getNo());
+
+				// 4.결과처리
+				count = pstmt.executeUpdate();
+
+			}
+			
+			
+		} catch (ClassNotFoundException e) {
+			System.out.println("error: 드라이버 로딩 실패" + e);
+
+		} catch (SQLException e) {
+			System.out.println("error:" + e);
+
+		} finally {
+
+			try {
+				// 5. 자원정리
+				if (pstmt != null) {
+					pstmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+
+			} catch (SQLException e) {
+				System.out.println("error:" + e);
+			}
+		}
+		
+		
+		return count;
+	}
+	
+	
 	
 public UserVo getUser(int no) {
 		
